@@ -63,6 +63,32 @@ const LOCKED_EXERCISES = [
 
 const ALL_EXERCISES = [...FREE_EXERCISES, ...LOCKED_EXERCISES]
 const SODIUM_LEVELS = ['Low', 'Medium', 'High']
+const GLASS_ML = 250
+const WATER_GOAL_GLASSES = 8
+const METERS_PER_STEP = 0.75
+
+const SODIUM_GUIDANCE = {
+  Low: 'Mostly fresh or home-cooked meals with little added salt (<1,500 mg/day).',
+  Medium: 'Typical mixed diet with moderate seasoning (~1,500–2,300 mg/day).',
+  High: 'Salty snacks, ramen, or delivery meals (>2,300 mg/day) — often causes puffiness.',
+}
+
+function formatWaterVolume(glasses) {
+  const ml = glasses * GLASS_ML
+  if (ml >= 1000) {
+    const liters = ml / 1000
+    return liters % 1 === 0 ? `${liters} L` : `${liters.toFixed(1)} L`
+  }
+  return `${ml.toLocaleString()} ml`
+}
+
+function formatStepsDistance(steps) {
+  const meters = steps * METERS_PER_STEP
+  if (meters < 1000) {
+    return `${Math.round(meters).toLocaleString()} m`
+  }
+  return `${(meters / 1000).toFixed(1)} km`
+}
 
 function getTodayKey() {
   return new Date().toISOString().slice(0, 10)
@@ -484,8 +510,13 @@ function Dashboard() {
           <div className="dashboard-tracker-card">
             <div className="dashboard-tracker-card__header">
               <h3>Water</h3>
-              <span>{trackers.water}/8 glasses</span>
+              <span>
+                {trackers.water}/{WATER_GOAL_GLASSES} glasses · {formatWaterVolume(trackers.water)}
+              </span>
             </div>
+            <p className="dashboard-tracker-card__hint">
+              1 glass = {GLASS_ML} ml · Daily goal: {formatWaterVolume(WATER_GOAL_GLASSES)} ({WATER_GOAL_GLASSES} glasses)
+            </p>
             <div className="dashboard-tracker-card__controls">
               <button
                 type="button"
@@ -533,11 +564,17 @@ function Dashboard() {
                 </button>
               ))}
             </div>
+            <p className="dashboard-tracker-card__hint">
+              {SODIUM_GUIDANCE[trackers.sodium]}
+            </p>
           </div>
 
           <div className="dashboard-tracker-card">
             <div className="dashboard-tracker-card__header">
               <h3>Steps</h3>
+              {trackers.steps > 0 && (
+                <span>≈ {formatStepsDistance(trackers.steps)}</span>
+              )}
             </div>
             <input
               type="number"
@@ -550,6 +587,11 @@ function Dashboard() {
               placeholder="0"
               aria-label="Daily steps"
             />
+            <p className="dashboard-tracker-card__hint">
+              {trackers.steps > 0
+                ? `${trackers.steps.toLocaleString()} steps ≈ ${formatStepsDistance(trackers.steps)} walked (avg ${METERS_PER_STEP * 100} cm stride)`
+                : `1,000 steps ≈ ${formatStepsDistance(1000)} · 3,000 steps ≈ ${formatStepsDistance(3000)}`}
+            </p>
           </div>
         </div>
       </section>

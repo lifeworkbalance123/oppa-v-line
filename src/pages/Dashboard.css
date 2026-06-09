@@ -366,6 +366,22 @@
 .dashboard-tracker-card__header span {
   font-size: 0.875rem;
   color: var(--text-secondary);
+  text-align: right;
+}
+
+.dashboard-tracker-card__hint {
+  margin: 0;
+  font-size: 0.75rem;
+  line-height: 1.45;
+  color: var(--text-secondary);
+}
+
+.dashboard-tracker-card__hint:not(:last-child) {
+  margin-bottom: 12px;
+}
+
+.dashboard-tracker-card__hint:last-child {
+  margin-top: 10px;
 }
 
 .dashboard-tracker-card__controls {

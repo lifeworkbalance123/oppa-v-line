@@ -61,20 +61,44 @@
   background: var(--accent-bg);
 }
 
+.video-fallback__media {
+  margin-top: 12px;
+}
+
+.video-fallback__anatomy {
+  display: block;
+  width: 100%;
+  max-height: 220px;
+  object-fit: contain;
+  background: var(--bg-primary);
+  border-bottom: 1px solid var(--border);
+}
+
+.video-fallback__anatomy--inline {
+  margin-bottom: 16px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+}
+
 .video-fallback__embed-wrapper {
   position: relative;
   width: 100%;
-  margin-top: 12px;
   aspect-ratio: 16 / 9;
   background: var(--bg-primary);
 }
 
-.video-fallback__embed {
+.video-fallback__embed,
+.video-fallback__video {
   position: absolute;
   inset: 0;
   width: 100%;
   height: 100%;
   border: 0;
+}
+
+.video-fallback__video {
+  object-fit: contain;
+  background: #000;
 }
 
 .video-fallback__instructions {

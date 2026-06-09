@@ -1,4 +1,4 @@
-const CACHE_NAME = 'oppa-vline-v1'
+const CACHE_NAME = 'oppa-vline-v2'
 
 const PRECACHE_URLS = ['/', '/index.html', '/manifest.json']
 

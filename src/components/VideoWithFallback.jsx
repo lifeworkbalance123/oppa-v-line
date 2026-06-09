@@ -1,35 +1,6 @@
 import { useEffect, useId, useMemo, useState } from 'react'
+import { getYouTubeEmbedUrl } from '../lib/exerciseSettings'
 import './VideoWithFallback.css'
-
-function getYouTubeEmbedUrl(url) {
-  if (!url) return null
-
-  try {
-    const parsed = new URL(url)
-    const host = parsed.hostname.replace('www.', '')
-
-    if (host === 'youtu.be') {
-      const videoId = parsed.pathname.slice(1)
-      return videoId ? `https://www.youtube.com/embed/${videoId}` : null
-    }
-
-    if (host === 'youtube.com' || host === 'm.youtube.com') {
-      const videoId = parsed.searchParams.get('v')
-      if (videoId) {
-        return `https://www.youtube.com/embed/${videoId}`
-      }
-
-      const embedMatch = parsed.pathname.match(/^\/embed\/([^/?]+)/)
-      if (embedMatch?.[1]) {
-        return `https://www.youtube.com/embed/${embedMatch[1]}`
-      }
-    }
-  } catch {
-    return null
-  }
-
-  return null
-}
 
 function TextInstructions({ exerciseName, steps, stepsId }) {
   if (!steps.length) {
@@ -51,7 +22,13 @@ function TextInstructions({ exerciseName, steps, stepsId }) {
   )
 }
 
-function VideoWithFallback({ exerciseName, youtubeUrl, steps = [] }) {
+function VideoWithFallback({
+  exerciseName,
+  youtubeUrl,
+  mp4Url = null,
+  anatomyImageUrl = null,
+  steps = [],
+}) {
   const titleId = useId()
   const stepsId = useId()
   const statusId = useId()
@@ -61,26 +38,34 @@ function VideoWithFallback({ exerciseName, youtubeUrl, steps = [] }) {
   const [preferTextMode, setPreferTextMode] = useState(false)
 
   const embedUrl = useMemo(() => getYouTubeEmbedUrl(youtubeUrl), [youtubeUrl])
+  const hasMp4 = Boolean(mp4Url)
+  const hasYoutube = Boolean(embedUrl) && !hasMp4
+  const hasVideoSource = hasMp4 || hasYoutube
   const safeSteps = useMemo(
     () => steps.filter((step) => typeof step === 'string' && step.trim()),
     [steps],
   )
 
-  const showVideo = isOnline && !preferTextMode && Boolean(embedUrl)
+  const showVideo = !preferTextMode && (hasMp4 || (isOnline && hasYoutube))
   const showText = !showVideo
-  const statusMessage = !isOnline
-    ? 'You are offline. Showing text instructions.'
-    : preferTextMode
-      ? 'Showing text instructions.'
-      : !embedUrl
-        ? 'Video unavailable. Showing text instructions.'
-        : 'Showing video.'
+
+  const statusMessage = preferTextMode
+    ? 'Showing text instructions.'
+    : hasMp4
+      ? 'Showing uploaded demo video.'
+      : !isOnline
+        ? 'You are offline. Showing text instructions.'
+        : !hasYoutube
+          ? 'Video unavailable. Showing text instructions.'
+          : 'Showing video.'
 
   useEffect(() => {
     const handleOnline = () => setIsOnline(true)
     const handleOffline = () => {
       setIsOnline(false)
-      setPreferTextMode(false)
+      if (!hasMp4) {
+        setPreferTextMode(false)
+      }
     }
 
     window.addEventListener('online', handleOnline)
@@ -90,17 +75,19 @@ function VideoWithFallback({ exerciseName, youtubeUrl, steps = [] }) {
       window.removeEventListener('online', handleOnline)
       window.removeEventListener('offline', handleOffline)
     }
-  }, [])
+  }, [hasMp4])
 
   useEffect(() => {
-    if (isOnline && embedUrl) {
+    if (hasVideoSource) {
       setPreferTextMode(false)
     }
-  }, [exerciseName, isOnline, embedUrl])
+  }, [exerciseName, hasVideoSource, mp4Url, embedUrl])
 
   const handleToggleMode = () => {
     setPreferTextMode((prev) => !prev)
   }
+
+  const canShowVideoToggle = hasVideoSource && (hasMp4 || isOnline)
 
   return (
     <section
@@ -117,7 +104,7 @@ function VideoWithFallback({ exerciseName, youtubeUrl, steps = [] }) {
         </p>
       </div>
 
-      {isOnline && embedUrl && (
+      {canShowVideoToggle && (
         <div className="video-fallback__toolbar">
           <button
             type="button"
@@ -132,15 +119,35 @@ function VideoWithFallback({ exerciseName, youtubeUrl, steps = [] }) {
       )}
 
       {showVideo ? (
-        <div className="video-fallback__embed-wrapper">
-          <iframe
-            className="video-fallback__embed"
-            src={embedUrl}
-            title={`${exerciseName} exercise video`}
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-            allowFullScreen
-            loading="lazy"
-          />
+        <div className="video-fallback__media">
+          {anatomyImageUrl && (
+            <img
+              className="video-fallback__anatomy"
+              src={anatomyImageUrl}
+              alt={`${exerciseName} anatomy reference`}
+            />
+          )}
+          <div className="video-fallback__embed-wrapper">
+            {hasMp4 ? (
+              <video
+                className="video-fallback__video"
+                src={mp4Url}
+                controls
+                playsInline
+                preload="metadata"
+                title={`${exerciseName} exercise video`}
+              />
+            ) : (
+              <iframe
+                className="video-fallback__embed"
+                src={embedUrl}
+                title={`${exerciseName} exercise video`}
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                allowFullScreen
+                loading="lazy"
+              />
+            )}
+          </div>
         </div>
       ) : (
         <div
@@ -148,11 +155,18 @@ function VideoWithFallback({ exerciseName, youtubeUrl, steps = [] }) {
           role="region"
           aria-label={`${exerciseName} text instructions`}
         >
-          {!isOnline && (
+          {!isOnline && !hasMp4 && (
             <p className="video-fallback__offline-note">
               You are currently offline. Follow these steps until your connection
               returns.
             </p>
+          )}
+          {anatomyImageUrl && (
+            <img
+              className="video-fallback__anatomy video-fallback__anatomy--inline"
+              src={anatomyImageUrl}
+              alt={`${exerciseName} anatomy reference`}
+            />
           )}
           <TextInstructions
             exerciseName={exerciseName}

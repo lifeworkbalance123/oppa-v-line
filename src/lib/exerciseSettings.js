@@ -1,6 +1,7 @@
 import { ADMIN_EXERCISES } from './exerciseCatalog'
 
 export const EXERCISE_SETTINGS_KEY = 'oppa-v-line-exercise-settings'
+export const EXERCISE_SETTINGS_UPDATED_EVENT = 'oppa-v-line-exercise-settings-updated'
 
 const MAX_MP4_BYTES = 4 * 1024 * 1024
 const MAX_IMAGE_BYTES = 2 * 1024 * 1024
@@ -78,7 +79,17 @@ export function loadExerciseSettings() {
 }
 
 export function saveExerciseSettings(settings) {
-  localStorage.setItem(EXERCISE_SETTINGS_KEY, JSON.stringify(settings))
+  try {
+    localStorage.setItem(EXERCISE_SETTINGS_KEY, JSON.stringify(settings))
+    window.dispatchEvent(new CustomEvent(EXERCISE_SETTINGS_UPDATED_EVENT))
+  } catch (error) {
+    if (error?.name === 'QuotaExceededError') {
+      throw new Error(
+        'Browser storage is full. Use a smaller MP4 (under 4 MB) or remove an old upload.',
+      )
+    }
+    throw error
+  }
 }
 
 export function updateExerciseSetting(exerciseId, patch) {
@@ -96,6 +107,18 @@ export function getEffectiveYoutubeUrl(exerciseId, fallback = '') {
   const settings = loadExerciseSettings()
   const saved = settings[exerciseId]?.youtubeUrl?.trim()
   return saved || fallback
+}
+
+export function getExerciseMedia(exerciseId, fallbackYoutubeUrl = '') {
+  const settings = loadExerciseSettings()[exerciseId] ?? {}
+  const youtubeUrl = settings.youtubeUrl?.trim() || fallbackYoutubeUrl
+
+  return {
+    mp4Url: settings.mp4DataUrl || null,
+    youtubeUrl,
+    youtubeEmbedUrl: getYouTubeEmbedUrl(youtubeUrl),
+    anatomyImageUrl: settings.anatomyDataUrl || null,
+  }
 }
 
 export function getExercisePreview(exerciseId, fallbackYoutubeUrl = '') {

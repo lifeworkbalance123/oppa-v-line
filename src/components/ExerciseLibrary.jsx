@@ -1,5 +1,9 @@
 import { useEffect, useMemo, useState } from 'react'
-import { getEffectiveYoutubeUrl } from '../lib/exerciseSettings'
+import {
+  EXERCISE_SETTINGS_KEY,
+  EXERCISE_SETTINGS_UPDATED_EVENT,
+  getExerciseMedia,
+} from '../lib/exerciseSettings'
 import VideoWithFallback from './VideoWithFallback'
 import './ExerciseLibrary.css'
 
@@ -108,7 +112,11 @@ function loadProgress() {
   }
 }
 
-function ExerciseCard({ exercise, completedSets, mode, onModeChange, onToggleSet }) {
+function ExerciseCard({ exercise, completedSets, mode, onModeChange, onToggleSet, settingsTick }) {
+  const media = useMemo(
+    () => getExerciseMedia(exercise.id, exercise.youtubeUrl),
+    [exercise.id, exercise.youtubeUrl, settingsTick],
+  )
   const completedCount = completedSets.filter(Boolean).length
   const isComplete = completedCount === exercise.sets
 
@@ -156,7 +164,9 @@ function ExerciseCard({ exercise, completedSets, mode, onModeChange, onToggleSet
       {mode === 'demo' ? (
         <VideoWithFallback
           exerciseName={exercise.name}
-          youtubeUrl={getEffectiveYoutubeUrl(exercise.id, exercise.youtubeUrl)}
+          youtubeUrl={media.youtubeUrl}
+          mp4Url={media.mp4Url}
+          anatomyImageUrl={media.anatomyImageUrl}
           steps={exercise.steps}
         />
       ) : (
@@ -192,12 +202,33 @@ function ExerciseCard({ exercise, completedSets, mode, onModeChange, onToggleSet
 
 function ExerciseLibrary() {
   const [progress, setProgress] = useState(loadProgress)
+  const [settingsTick, setSettingsTick] = useState(0)
   const [modes, setModes] = useState(
     () => EXERCISES.reduce((acc, exercise) => {
       acc[exercise.id] = 'demo'
       return acc
     }, {}),
   )
+
+  useEffect(() => {
+    const refreshMedia = () => setSettingsTick((tick) => tick + 1)
+
+    const handleStorage = (event) => {
+      if (event.key === EXERCISE_SETTINGS_KEY) {
+        refreshMedia()
+      }
+    }
+
+    window.addEventListener('focus', refreshMedia)
+    window.addEventListener(EXERCISE_SETTINGS_UPDATED_EVENT, refreshMedia)
+    window.addEventListener('storage', handleStorage)
+
+    return () => {
+      window.removeEventListener('focus', refreshMedia)
+      window.removeEventListener(EXERCISE_SETTINGS_UPDATED_EVENT, refreshMedia)
+      window.removeEventListener('storage', handleStorage)
+    }
+  }, [])
 
   const overallProgress = useMemo(() => {
     const totalSets = EXERCISES.reduce((sum, exercise) => sum + exercise.sets, 0)
@@ -242,6 +273,7 @@ function ExerciseLibrary() {
             mode={modes[exercise.id]}
             onModeChange={(mode) => handleModeChange(exercise.id, mode)}
             onToggleSet={(setIndex) => handleToggleSet(exercise.id, setIndex)}
+            settingsTick={settingsTick}
           />
         ))}
       </div>
