@@ -1,6 +1,6 @@
 import { createContext, useContext, useEffect, useState } from 'react'
 import { BrowserRouter, Link, Navigate, Route, Routes } from 'react-router-dom'
-import { supabase } from './lib/supabase'
+import { isSupabaseConfigured, supabase } from './lib/supabase'
 import Dashboard from './pages/Dashboard'
 import Checkout from './pages/Checkout'
 import './App.css'
@@ -30,7 +30,26 @@ function LoadingScreen() {
   return (
     <div className="app-loading" role="status" aria-live="polite">
       <div className="app-loading__spinner" aria-hidden="true" />
-      <p>Loading...</p>
+      <p className="app-loading__text">Loading...</p>
+    </div>
+  )
+}
+
+function ConfigErrorScreen() {
+  return (
+    <div className="app-loading app-loading--error" role="alert">
+      <h1 className="app-loading__title">Configuration required</h1>
+      <p className="app-loading__text">
+        Supabase environment variables are missing from this build. Add
+        {' '}
+        <code>VITE_SUPABASE_URL</code>
+        {' '}
+        and
+        {' '}
+        <code>VITE_SUPABASE_ANON_KEY</code>
+        {' '}
+        in Vercel, then redeploy.
+      </p>
     </div>
   )
 }
@@ -73,19 +92,46 @@ function App() {
   const [darkMode, setDarkMode] = useState(getInitialTheme)
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setUser(session?.user ?? null)
+    if (!isSupabaseConfigured || !supabase) {
       setLoading(false)
-    })
+      return undefined
+    }
+
+    let cancelled = false
+
+    const finishLoading = (session) => {
+      if (!cancelled) {
+        setUser(session?.user ?? null)
+        setLoading(false)
+      }
+    }
+
+    const timeoutId = window.setTimeout(() => {
+      if (!cancelled) {
+        setLoading(false)
+      }
+    }, 8000)
+
+    supabase.auth
+      .getSession()
+      .then(({ data: { session } }) => {
+        finishLoading(session)
+      })
+      .catch(() => {
+        finishLoading(null)
+      })
 
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, session) => {
-      setUser(session?.user ?? null)
-      setLoading(false)
+      finishLoading(session)
     })
 
-    return () => subscription.unsubscribe()
+    return () => {
+      cancelled = true
+      window.clearTimeout(timeoutId)
+      subscription.unsubscribe()
+    }
   }, [])
 
   useEffect(() => {
@@ -97,7 +143,7 @@ function App() {
     setDarkMode((prev) => (prev === 'dark' ? 'light' : 'dark'))
   }
 
-  const signOut = () => supabase.auth.signOut()
+  const signOut = () => supabase?.auth.signOut()
 
   const authValue = {
     user,
@@ -105,6 +151,10 @@ function App() {
     darkMode,
     toggleDarkMode,
     signOut,
+  }
+
+  if (!isSupabaseConfigured) {
+    return <ConfigErrorScreen />
   }
 
   if (loading) {
