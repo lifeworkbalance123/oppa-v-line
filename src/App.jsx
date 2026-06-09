@@ -8,6 +8,7 @@ import Progress from './pages/Progress'
 import Library from './pages/Library'
 import Profile from './pages/Profile'
 import Admin from './pages/Admin'
+import Routine from './pages/Routine'
 import './App.css'
 
 const AuthContext = createContext(null)
@@ -132,6 +133,7 @@ function App() {
             <Route path="/library" element={<Library />} />
             <Route path="/profile" element={<Profile />} />
             <Route path="/admin" element={<Admin />} />
+            <Route path="/routine" element={<Routine />} />
           </Route>
           <Route path="/checkout" element={<Checkout />} />
           <Route path="/" element={<Navigate to="/home" replace />} />

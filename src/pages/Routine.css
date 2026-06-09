@@ -1,0 +1,209 @@
+.routine-page {
+  padding: 8px 0 24px;
+}
+
+.routine-page__header {
+  margin-bottom: 20px;
+}
+
+.routine-page__back {
+  display: inline-block;
+  margin-bottom: 12px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--accent-hover);
+  text-decoration: none;
+}
+
+.routine-page__title {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.routine-page__meta {
+  margin: 8px 0 0;
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+}
+
+.routine-page__list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.routine-exercise {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 16px;
+  border-radius: 16px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow);
+}
+
+.routine-exercise--locked {
+  opacity: 0.72;
+}
+
+.routine-exercise--completed {
+  border-color: var(--accent-border);
+}
+
+.routine-exercise__title-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.routine-exercise__name {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.routine-exercise__badge {
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  background: var(--locked-bg);
+  color: var(--locked);
+}
+
+.routine-exercise__badge--done {
+  background: var(--success-bg);
+  color: var(--success);
+}
+
+.routine-exercise__duration {
+  margin: 4px 0 0;
+  font-size: 0.8125rem;
+  color: var(--text-secondary);
+}
+
+.routine-exercise__actions {
+  display: flex;
+  gap: 8px;
+}
+
+.routine-btn {
+  min-height: 44px;
+  padding: 10px 16px;
+  border-radius: 12px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  touch-action: manipulation;
+  text-decoration: none;
+  text-align: center;
+}
+
+.routine-btn--primary {
+  flex: 1;
+  border: 1px solid var(--accent);
+  background: var(--accent);
+  color: #fff;
+}
+
+.routine-btn--secondary {
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text-primary);
+}
+
+.routine-btn--accent {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--accent);
+  background: var(--accent);
+  color: #fff;
+}
+
+.routine-btn--full {
+  width: 100%;
+}
+
+.routine-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.routine-page__extra {
+  margin-bottom: 16px;
+  padding: 16px;
+  border-radius: 16px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow);
+}
+
+.routine-page__extra-title {
+  margin: 0 0 10px;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.routine-page__extra-text {
+  margin: 0 0 12px;
+  font-size: 0.875rem;
+  line-height: 1.45;
+  color: var(--text-secondary);
+}
+
+.routine-skincare {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  width: 100%;
+  min-height: 44px;
+  padding: 12px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  text-align: left;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+
+.routine-skincare--done {
+  border-color: var(--accent-border);
+  background: var(--accent-bg);
+}
+
+.routine-skincare__check {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  flex-shrink: 0;
+  font-size: 0.875rem;
+  color: var(--accent-hover);
+}
+
+.routine-skincare--done .routine-skincare__check {
+  border-color: var(--accent);
+  background: var(--accent);
+  color: #fff;
+}
+
+.routine-skincare__hint {
+  display: block;
+  margin-top: 4px;
+  font-size: 0.75rem;
+  font-weight: 400;
+  color: var(--text-secondary);
+}

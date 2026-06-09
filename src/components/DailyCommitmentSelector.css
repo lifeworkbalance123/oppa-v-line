@@ -1,0 +1,136 @@
+.daily-commitment {
+  margin-bottom: 20px;
+}
+
+.daily-commitment__header {
+  margin-bottom: 12px;
+}
+
+.daily-commitment__title {
+  margin: 0;
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.daily-commitment__subtitle {
+  margin: 6px 0 0;
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+}
+
+.daily-commitment__options {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.daily-commitment__card {
+  width: 100%;
+  min-height: 44px;
+  padding: 14px 16px;
+  border-radius: 16px;
+  border: 1px solid var(--border);
+  background: var(--bg-card);
+  box-shadow: var(--shadow);
+  text-align: left;
+  cursor: pointer;
+  touch-action: manipulation;
+  transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
+}
+
+.daily-commitment__card:hover {
+  border-color: var(--accent-border);
+}
+
+.daily-commitment__card--selected {
+  border-color: var(--accent);
+  background: var(--accent-bg);
+  box-shadow:
+    0 0 0 1px var(--accent-border),
+    var(--shadow);
+}
+
+.daily-commitment__card-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.daily-commitment__icon {
+  font-size: 1.5rem;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.daily-commitment__card-titles {
+  flex: 1;
+  min-width: 0;
+}
+
+.daily-commitment__card-title {
+  margin: 0;
+  font-size: 0.9375rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: var(--text-primary);
+}
+
+.daily-commitment__card-time {
+  margin: 4px 0 0;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--accent-hover);
+}
+
+.daily-commitment__includes {
+  margin: 0;
+  padding-left: 1.125rem;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.daily-commitment__includes li {
+  font-size: 0.8125rem;
+  line-height: 1.4;
+  color: var(--text-secondary);
+}
+
+.daily-commitment__card--selected .daily-commitment__includes li {
+  color: var(--text-primary);
+}
+
+.daily-commitment__start {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  width: 100%;
+  min-height: 52px;
+  margin-top: 14px;
+  padding: 14px 20px;
+  border-radius: 14px;
+  border: 1px solid var(--accent);
+  background: var(--accent);
+  color: #fff;
+  font-size: 0.9375rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+
+.daily-commitment__start:hover {
+  background: var(--accent-hover);
+  border-color: var(--accent-hover);
+}
+
+.daily-commitment__start-meta {
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: normal;
+  opacity: 0.9;
+}

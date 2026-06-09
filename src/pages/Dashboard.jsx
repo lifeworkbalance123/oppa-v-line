@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useAuth } from '../App'
 import {
   checkPremiumAccess,
@@ -8,6 +8,7 @@ import {
   createCheckoutSession,
   redirectToCheckout,
 } from '../lib/stripe'
+import DailyCommitmentSelector from '../components/DailyCommitmentSelector'
 import './Dashboard.css'
 
 const STORAGE_KEYS = {
@@ -112,18 +113,6 @@ function getDisplayName(user) {
   )
 }
 
-function parseMinutes(duration) {
-  const match = duration.match(/(\d+)/)
-  return match ? Number(match[1]) : 0
-}
-
-function getRoutineTotalMinutes() {
-  return FREE_EXERCISES.reduce(
-    (total, exercise) => total + parseMinutes(exercise.duration),
-    0,
-  )
-}
-
 function loadPuffinessRating() {
   try {
     const stored = localStorage.getItem(STORAGE_KEYS.puffiness)
@@ -213,7 +202,6 @@ function ExerciseCard({
 
 function Dashboard() {
   const { user } = useAuth()
-  const routineRef = useRef(null)
   const [completedExercises, setCompletedExercises] = useState(loadCompletedExercises)
   const [trackers, setTrackers] = useState(loadTrackers)
   const [puffinessRating, setPuffinessRating] = useState(loadPuffinessRating)
@@ -224,8 +212,6 @@ function Dashboard() {
 
   const greeting = getTimeGreeting()
   const displayName = getDisplayName(user)
-  const routineMinutes = getRoutineTotalMinutes()
-
   const completedSet = useMemo(
     () => new Set(completedExercises),
     [completedExercises],
@@ -243,6 +229,12 @@ function Dashboard() {
 
   const showUpgradeBanner = freeCompletedCount >= 2 && !isPremium
   const showSodiumAlert = trackers.sodium === 'High' && !dismissedSodiumAlert
+
+  useEffect(() => {
+    if (window.location.hash === '#daily-trackers') {
+      document.getElementById('daily-trackers')?.scrollIntoView({ behavior: 'smooth' })
+    }
+  }, [])
 
   useEffect(() => {
     localStorage.setItem(
@@ -371,10 +363,6 @@ function Dashboard() {
     setTrackers((prev) => ({ ...prev, steps }))
   }
 
-  const handleStartRoutine = () => {
-    routineRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
-  }
-
   return (
     <div className="dashboard">
       <header className="dashboard-greeting">
@@ -413,22 +401,7 @@ function Dashboard() {
         </div>
       </section>
 
-      <section className="dashboard-card dashboard-routine">
-        <div className="dashboard-routine__info">
-          <h2 className="dashboard-card__title">Today&apos;s Routine</h2>
-          <p className="dashboard-routine__time">{routineMinutes}-Min</p>
-          <p className="dashboard-routine__detail">
-            {FREE_EXERCISES.map((exercise) => exercise.name).join(' + ')}
-          </p>
-        </div>
-        <button
-          type="button"
-          className="dashboard-btn dashboard-btn--accent dashboard-btn--full"
-          onClick={handleStartRoutine}
-        >
-          Start Routine
-        </button>
-      </section>
+      <DailyCommitmentSelector />
 
       {showSodiumAlert && (
         <div className="dashboard-alert dashboard-alert--warning" role="alert">
@@ -472,7 +445,7 @@ function Dashboard() {
         </div>
       )}
 
-      <section className="dashboard-section" ref={routineRef}>
+      <section className="dashboard-section">
         <h2 className="dashboard-section__title">Free Exercises</h2>
         <div className="dashboard-exercise-list">
           {FREE_EXERCISES.map((exercise) => (
@@ -504,7 +477,7 @@ function Dashboard() {
         </div>
       </section>
 
-      <section className="dashboard-section">
+      <section className="dashboard-section" id="daily-trackers">
         <h2 className="dashboard-section__title">Daily Trackers</h2>
         <div className="dashboard-trackers">
           <div className="dashboard-tracker-card">
