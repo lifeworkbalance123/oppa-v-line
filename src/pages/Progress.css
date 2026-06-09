@@ -1,0 +1,21 @@
+.progress-page {
+  padding: 4px 0 16px;
+}
+
+.progress-page__header {
+  margin-bottom: 20px;
+}
+
+.progress-page__title {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.progress-page__text {
+  margin: 8px 0 0;
+  font-size: 0.9375rem;
+  line-height: 1.5;
+  color: var(--text-secondary);
+}

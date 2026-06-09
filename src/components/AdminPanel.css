@@ -1,0 +1,246 @@
+.admin-panel {
+  padding: 8px 0 24px;
+}
+
+.admin-panel__header {
+  margin-bottom: 16px;
+}
+
+.admin-panel__title {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.admin-panel__subtitle {
+  margin: 8px 0 0;
+  font-size: 0.875rem;
+  line-height: 1.5;
+  color: var(--text-secondary);
+}
+
+.admin-panel__list {
+  display: grid;
+  gap: 16px;
+}
+
+.admin-panel__card {
+  padding: 16px;
+  border-radius: 16px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow);
+}
+
+.admin-panel__card-header {
+  margin-bottom: 16px;
+}
+
+.admin-panel__card-title {
+  margin: 0;
+  font-size: 1.0625rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.admin-panel__card-id {
+  margin: 4px 0 0;
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+}
+
+.admin-panel__field {
+  margin-bottom: 16px;
+}
+
+.admin-panel__label {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.admin-panel__input-row {
+  display: flex;
+  gap: 8px;
+}
+
+.admin-panel__input {
+  flex: 1;
+  min-width: 0;
+  min-height: 44px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  font-size: 0.875rem;
+}
+
+.admin-panel__input:focus {
+  outline: 2px solid var(--accent-border);
+  outline-offset: 1px;
+}
+
+.admin-panel__btn {
+  min-height: 44px;
+  padding: 10px 16px;
+  border-radius: 10px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  touch-action: manipulation;
+  white-space: nowrap;
+}
+
+.admin-panel__btn--primary {
+  border: 1px solid var(--accent);
+  background: var(--accent);
+  color: #fff;
+}
+
+.admin-panel__btn--primary:hover {
+  background: var(--accent-hover);
+  border-color: var(--accent-hover);
+}
+
+.admin-panel__upload-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+}
+
+.admin-panel__file-input {
+  width: 100%;
+  font-size: 0.8125rem;
+  color: var(--text-secondary);
+}
+
+.admin-panel__file-input::file-selector-button {
+  margin-right: 10px;
+  min-height: 40px;
+  padding: 8px 12px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.admin-panel__link-btn {
+  border: none;
+  background: transparent;
+  padding: 0;
+  color: var(--accent-hover);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.admin-panel__hint {
+  margin: 8px 0 0;
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+}
+
+.admin-panel__preview-section {
+  margin-top: 4px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border);
+}
+
+.admin-panel__preview-title {
+  margin: 0 0 12px;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.admin-panel__preview {
+  display: grid;
+  gap: 14px;
+}
+
+.admin-panel__preview-empty {
+  margin: 0;
+  font-size: 0.8125rem;
+  color: var(--text-secondary);
+}
+
+.admin-panel__preview-block {
+  padding: 12px;
+  border-radius: 12px;
+  background: var(--bg-primary);
+  border: 1px solid var(--border);
+}
+
+.admin-panel__preview-label {
+  margin: 0 0 6px;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.admin-panel__preview-meta {
+  margin: 0 0 10px;
+  font-size: 0.75rem;
+  line-height: 1.4;
+  color: var(--text-secondary);
+  word-break: break-all;
+}
+
+.admin-panel__preview-warning {
+  margin: 0;
+  font-size: 0.75rem;
+  color: var(--warning);
+}
+
+.admin-panel__preview-embed {
+  position: relative;
+  width: 100%;
+  padding-top: 56.25%;
+  border-radius: 10px;
+  overflow: hidden;
+  background: #000;
+}
+
+.admin-panel__preview-embed iframe {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+.admin-panel__preview-video {
+  width: 100%;
+  border-radius: 10px;
+  background: #000;
+}
+
+.admin-panel__preview-image {
+  display: block;
+  width: 100%;
+  max-height: 220px;
+  object-fit: contain;
+  border-radius: 10px;
+  background: var(--bg-card);
+}
+
+.admin-panel__preview-updated {
+  margin: 0;
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+}
+
+.admin-panel__message {
+  margin: 12px 0 0;
+  font-size: 0.8125rem;
+  color: var(--accent-hover);
+}

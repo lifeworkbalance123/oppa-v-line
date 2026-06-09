@@ -1,0 +1,127 @@
+.nightly-checkin {
+  margin-bottom: 24px;
+}
+
+.nightly-checkin__header {
+  margin-bottom: 12px;
+}
+
+.nightly-checkin__title {
+  margin: 0;
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.nightly-checkin__subtitle {
+  margin: 6px 0 0;
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+}
+
+.nightly-checkin__card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  box-shadow: var(--shadow);
+  padding: 16px;
+}
+
+.nightly-checkin__section {
+  margin-bottom: 20px;
+}
+
+.nightly-checkin__section:last-of-type {
+  margin-bottom: 16px;
+}
+
+.nightly-checkin__label {
+  margin: 0 0 10px;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.nightly-checkin__options {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.nightly-checkin__option {
+  flex: 1;
+  min-width: 72px;
+  min-height: 48px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: var(--bg-primary);
+  color: var(--text-secondary);
+  font-family: var(--sans);
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  touch-action: manipulation;
+  transition: color 0.2s, background 0.2s, border-color 0.2s;
+}
+
+.nightly-checkin__option--compact {
+  min-width: 48px;
+  flex: 1;
+}
+
+.nightly-checkin__option--active {
+  color: var(--text-primary);
+  background: var(--accent-bg);
+  border-color: var(--accent-border);
+}
+
+.nightly-checkin__option:focus-visible {
+  outline: 2px solid var(--accent-border);
+  outline-offset: 2px;
+}
+
+.nightly-checkin__info {
+  margin: 10px 0 0;
+  font-size: 0.8125rem;
+  line-height: 1.45;
+  color: var(--text-secondary);
+}
+
+.nightly-checkin__complete {
+  width: 100%;
+  min-height: 52px;
+  padding: 14px 18px;
+  border-radius: 12px;
+  border: 1px solid var(--accent);
+  background: var(--accent);
+  color: #fff;
+  font-family: var(--sans);
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  touch-action: manipulation;
+  transition: background 0.2s, border-color 0.2s;
+}
+
+.nightly-checkin__complete:hover {
+  background: var(--accent-hover);
+  border-color: var(--accent-hover);
+}
+
+.nightly-checkin__complete:focus-visible {
+  outline: 2px solid var(--accent-border);
+  outline-offset: 2px;
+}
+
+.nightly-checkin__message {
+  margin: 12px 0 0;
+  font-size: 0.875rem;
+  line-height: 1.45;
+  color: var(--warning);
+  text-align: center;
+}
+
+.nightly-checkin__message--success {
+  color: var(--success);
+}

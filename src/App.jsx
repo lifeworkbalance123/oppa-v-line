@@ -1,12 +1,16 @@
 import { createContext, useContext, useEffect, useState } from 'react'
-import { BrowserRouter, Link, Navigate, Route, Routes } from 'react-router-dom'
+import { BrowserRouter, Navigate, Outlet, Route, Routes } from 'react-router-dom'
+import BottomTabNav from './components/BottomTabNav'
 import { isSupabaseConfigured, supabase } from './lib/supabase'
 import Dashboard from './pages/Dashboard'
 import Checkout from './pages/Checkout'
+import Progress from './pages/Progress'
+import Library from './pages/Library'
+import Profile from './pages/Profile'
+import Admin from './pages/Admin'
 import './App.css'
 
 const AuthContext = createContext(null)
-const THEME_STORAGE_KEY = 'oppa-v-line-theme'
 
 export function useAuth() {
   const context = useContext(AuthContext)
@@ -14,16 +18,6 @@ export function useAuth() {
     throw new Error('useAuth must be used within App')
   }
   return context
-}
-
-function getInitialTheme() {
-  const stored = localStorage.getItem(THEME_STORAGE_KEY)
-  if (stored === 'light' || stored === 'dark') {
-    return stored
-  }
-  return window.matchMedia('(prefers-color-scheme: dark)').matches
-    ? 'dark'
-    : 'light'
 }
 
 function LoadingScreen() {
@@ -54,34 +48,13 @@ function ConfigErrorScreen() {
   )
 }
 
-function AppLayout({ children, darkMode, onToggleDarkMode, user, onSignOut }) {
+function TabLayout() {
   return (
-    <div className="app">
-      <header className="app-header">
-        <nav className="app-nav" aria-label="Main navigation">
-          <Link to="/dashboard">Dashboard</Link>
-          <Link to="/checkout">Checkout</Link>
-        </nav>
-        <div className="app-header__actions">
-          {user && (
-            <span className="app-user">{user.email}</span>
-          )}
-          <button
-            type="button"
-            className="theme-toggle"
-            onClick={onToggleDarkMode}
-            aria-label={darkMode ? 'Switch to light mode' : 'Switch to dark mode'}
-          >
-            {darkMode ? 'Light' : 'Dark'}
-          </button>
-          {user && (
-            <button type="button" className="sign-out" onClick={onSignOut}>
-              Sign out
-            </button>
-          )}
-        </div>
-      </header>
-      <main className="app-main">{children}</main>
+    <div className="app-shell">
+      <main className="app-shell__content">
+        <Outlet />
+      </main>
+      <BottomTabNav />
     </div>
   )
 }
@@ -89,7 +62,6 @@ function AppLayout({ children, darkMode, onToggleDarkMode, user, onSignOut }) {
 function App() {
   const [user, setUser] = useState(null)
   const [loading, setLoading] = useState(true)
-  const [darkMode, setDarkMode] = useState(getInitialTheme)
 
   useEffect(() => {
     if (!isSupabaseConfigured || !supabase) {
@@ -134,22 +106,11 @@ function App() {
     }
   }, [])
 
-  useEffect(() => {
-    document.documentElement.setAttribute('data-theme', darkMode)
-    localStorage.setItem(THEME_STORAGE_KEY, darkMode)
-  }, [darkMode])
-
-  const toggleDarkMode = () => {
-    setDarkMode((prev) => (prev === 'dark' ? 'light' : 'dark'))
-  }
-
   const signOut = () => supabase?.auth.signOut()
 
   const authValue = {
     user,
     loading,
-    darkMode,
-    toggleDarkMode,
     signOut,
   }
 
@@ -164,18 +125,18 @@ function App() {
   return (
     <AuthContext.Provider value={authValue}>
       <BrowserRouter>
-        <AppLayout
-          darkMode={darkMode === 'dark'}
-          onToggleDarkMode={toggleDarkMode}
-          user={user}
-          onSignOut={signOut}
-        >
-          <Routes>
-            <Route path="/" element={<Navigate to="/dashboard" replace />} />
-            <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/checkout" element={<Checkout />} />
-          </Routes>
-        </AppLayout>
+        <Routes>
+          <Route element={<TabLayout />}>
+            <Route path="/home" element={<Dashboard />} />
+            <Route path="/progress" element={<Progress />} />
+            <Route path="/library" element={<Library />} />
+            <Route path="/profile" element={<Profile />} />
+            <Route path="/admin" element={<Admin />} />
+          </Route>
+          <Route path="/checkout" element={<Checkout />} />
+          <Route path="/" element={<Navigate to="/home" replace />} />
+          <Route path="/dashboard" element={<Navigate to="/home" replace />} />
+        </Routes>
       </BrowserRouter>
     </AuthContext.Provider>
   )

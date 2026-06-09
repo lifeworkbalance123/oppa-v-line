@@ -1,0 +1,98 @@
+.walk-progress {
+  margin-bottom: 24px;
+}
+
+.walk-progress__header {
+  margin-bottom: 12px;
+}
+
+.walk-progress__title {
+  margin: 0;
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.walk-progress__goal {
+  margin: 6px 0 0;
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+}
+
+.walk-progress__card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  box-shadow: var(--shadow);
+  padding: 16px;
+}
+
+.walk-progress__counter {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.walk-progress__btn {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  font-size: 1.5rem;
+  line-height: 1;
+  cursor: pointer;
+  touch-action: manipulation;
+  transition: border-color 0.2s, background 0.2s;
+}
+
+.walk-progress__btn:hover:not(:disabled) {
+  border-color: var(--accent-border);
+  background: var(--accent-bg);
+}
+
+.walk-progress__btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.walk-progress__count {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.walk-progress__count-value {
+  font-size: 2rem;
+  font-weight: 700;
+  line-height: 1;
+  color: var(--accent-hover);
+}
+
+.walk-progress__count-label {
+  font-size: 0.8125rem;
+  color: var(--text-secondary);
+}
+
+.walk-progress__remaining {
+  margin: 16px 0 0;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  text-align: center;
+}
+
+.walk-progress__tip {
+  margin: 10px 0 0;
+  padding: 12px;
+  border-radius: 12px;
+  border: 1px solid var(--accent-border);
+  background: var(--accent-bg);
+  font-size: 0.875rem;
+  line-height: 1.45;
+  color: var(--text-primary);
+  text-align: center;
+}

@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useAuth } from '../App'
 import {
   checkPremiumAccess,
@@ -14,6 +14,15 @@ const STORAGE_KEYS = {
   completed: 'oppa-v-line-completed-exercises',
   trackers: 'oppa-v-line-trackers',
   pendingUpgrade: 'oppa-v-line-pending-upgrade',
+  puffiness: 'oppa-v-line-puffiness',
+}
+
+const PUFFINESS_LABELS = {
+  1: 'Very puffy',
+  2: 'Puffy',
+  3: 'Moderate',
+  4: 'Slight',
+  5: 'Clear',
 }
 
 const FREE_EXERCISES = [
@@ -54,6 +63,54 @@ const LOCKED_EXERCISES = [
 
 const ALL_EXERCISES = [...FREE_EXERCISES, ...LOCKED_EXERCISES]
 const SODIUM_LEVELS = ['Low', 'Medium', 'High']
+
+function getTodayKey() {
+  return new Date().toISOString().slice(0, 10)
+}
+
+function getTimeGreeting() {
+  const hour = new Date().getHours()
+  if (hour < 12) return 'Good morning'
+  if (hour < 17) return 'Good afternoon'
+  return 'Good evening'
+}
+
+function getDisplayName(user) {
+  if (!user) return 'there'
+  const metadata = user.user_metadata ?? {}
+  return (
+    metadata.full_name
+    || metadata.name
+    || user.email?.split('@')[0]
+    || 'there'
+  )
+}
+
+function parseMinutes(duration) {
+  const match = duration.match(/(\d+)/)
+  return match ? Number(match[1]) : 0
+}
+
+function getRoutineTotalMinutes() {
+  return FREE_EXERCISES.reduce(
+    (total, exercise) => total + parseMinutes(exercise.duration),
+    0,
+  )
+}
+
+function loadPuffinessRating() {
+  try {
+    const stored = localStorage.getItem(STORAGE_KEYS.puffiness)
+    if (!stored) return 3
+    const parsed = JSON.parse(stored)
+    const today = getTodayKey()
+    const rating = Number(parsed?.[today])
+    if (rating >= 1 && rating <= 5) return rating
+    return 3
+  } catch {
+    return 3
+  }
+}
 
 const DEFAULT_TRACKERS = {
   water: 0,
@@ -130,12 +187,18 @@ function ExerciseCard({
 
 function Dashboard() {
   const { user } = useAuth()
+  const routineRef = useRef(null)
   const [completedExercises, setCompletedExercises] = useState(loadCompletedExercises)
   const [trackers, setTrackers] = useState(loadTrackers)
+  const [puffinessRating, setPuffinessRating] = useState(loadPuffinessRating)
   const [isPremium, setIsPremium] = useState(false)
   const [upgradeLoading, setUpgradeLoading] = useState(false)
   const [upgradeError, setUpgradeError] = useState(null)
   const [dismissedSodiumAlert, setDismissedSodiumAlert] = useState(false)
+
+  const greeting = getTimeGreeting()
+  const displayName = getDisplayName(user)
+  const routineMinutes = getRoutineTotalMinutes()
 
   const completedSet = useMemo(
     () => new Set(completedExercises),
@@ -165,6 +228,17 @@ function Dashboard() {
   useEffect(() => {
     localStorage.setItem(STORAGE_KEYS.trackers, JSON.stringify(trackers))
   }, [trackers])
+
+  useEffect(() => {
+    try {
+      const stored = localStorage.getItem(STORAGE_KEYS.puffiness)
+      const parsed = stored ? JSON.parse(stored) : {}
+      parsed[getTodayKey()] = puffinessRating
+      localStorage.setItem(STORAGE_KEYS.puffiness, JSON.stringify(parsed))
+    } catch {
+      // Ignore storage errors.
+    }
+  }, [puffinessRating])
 
   useEffect(() => {
     setDismissedSodiumAlert(false)
@@ -271,20 +345,64 @@ function Dashboard() {
     setTrackers((prev) => ({ ...prev, steps }))
   }
 
+  const handleStartRoutine = () => {
+    routineRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+  }
+
   return (
     <div className="dashboard">
-      <header className="dashboard-header">
-        <div>
-          <p className="dashboard-header__label">Daily Program</p>
-          <h1 className="dashboard-header__title">OPPA V-LINE</h1>
-        </div>
-        <div className="dashboard-header__progress">
-          <span className="dashboard-header__progress-count">
-            {totalCompletedCount}/{ALL_EXERCISES.length}
-          </span>
-          <span className="dashboard-header__progress-label">completed</span>
-        </div>
+      <header className="dashboard-greeting">
+        <h1 className="dashboard-greeting__title">
+          {greeting}, {displayName}
+        </h1>
+        <p className="dashboard-greeting__progress">
+          {totalCompletedCount}/{ALL_EXERCISES.length} completed today
+        </p>
       </header>
+
+      <section className="dashboard-card dashboard-puffiness">
+        <div className="dashboard-card__header">
+          <h2 className="dashboard-card__title">Morning Puffiness</h2>
+          <span className="dashboard-puffiness__value">
+            {PUFFINESS_LABELS[puffinessRating]}
+          </span>
+        </div>
+        <input
+          type="range"
+          className="dashboard-puffiness__slider"
+          min="1"
+          max="5"
+          step="1"
+          value={puffinessRating}
+          onChange={(event) => setPuffinessRating(Number(event.target.value))}
+          aria-label="Morning puffiness rating from 1 very puffy to 5 clear"
+          aria-valuemin={1}
+          aria-valuemax={5}
+          aria-valuenow={puffinessRating}
+          aria-valuetext={PUFFINESS_LABELS[puffinessRating]}
+        />
+        <div className="dashboard-puffiness__labels">
+          <span>1 · Very puffy</span>
+          <span>5 · Clear</span>
+        </div>
+      </section>
+
+      <section className="dashboard-card dashboard-routine">
+        <div className="dashboard-routine__info">
+          <h2 className="dashboard-card__title">Today&apos;s Routine</h2>
+          <p className="dashboard-routine__time">{routineMinutes}-Min</p>
+          <p className="dashboard-routine__detail">
+            {FREE_EXERCISES.map((exercise) => exercise.name).join(' + ')}
+          </p>
+        </div>
+        <button
+          type="button"
+          className="dashboard-btn dashboard-btn--accent dashboard-btn--full"
+          onClick={handleStartRoutine}
+        >
+          Start Routine
+        </button>
+      </section>
 
       {showSodiumAlert && (
         <div className="dashboard-alert dashboard-alert--warning" role="alert">
@@ -328,7 +446,7 @@ function Dashboard() {
         </div>
       )}
 
-      <section className="dashboard-section">
+      <section className="dashboard-section" ref={routineRef}>
         <h2 className="dashboard-section__title">Free Exercises</h2>
         <div className="dashboard-exercise-list">
           {FREE_EXERCISES.map((exercise) => (
