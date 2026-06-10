@@ -1,0 +1,190 @@
+.pdf-guides-admin {
+  margin-top: 32px;
+  padding-top: 24px;
+  border-top: 1px solid var(--border);
+}
+
+.pdf-guides-admin__header {
+  margin-bottom: 16px;
+}
+
+.pdf-guides-admin__title {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.pdf-guides-admin__subtitle {
+  margin: 8px 0 0;
+  font-size: 0.8125rem;
+  line-height: 1.45;
+  color: var(--text-secondary);
+}
+
+.pdf-guides-admin__subtitle code {
+  font-size: 0.75rem;
+  color: var(--accent-hover);
+}
+
+.pdf-guides-admin__auth-note {
+  margin: 10px 0 0;
+  font-size: 0.8125rem;
+  color: var(--warning);
+}
+
+.pdf-guides-admin__loading {
+  margin: 0;
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+}
+
+.pdf-guides-admin__alert {
+  padding: 14px 16px;
+  border-radius: 12px;
+  border: 1px solid var(--danger);
+  background: var(--danger-bg);
+}
+
+.pdf-guides-admin__alert p {
+  margin: 0;
+  font-size: 0.875rem;
+  color: var(--text-primary);
+}
+
+.pdf-guides-admin__alert-hint {
+  margin-top: 8px !important;
+  color: var(--text-secondary) !important;
+}
+
+.pdf-guides-admin__list {
+  display: grid;
+  gap: 12px;
+}
+
+.pdf-guides-admin__card {
+  padding: 16px;
+  border-radius: 16px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow);
+}
+
+.pdf-guides-admin__card-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.pdf-guides-admin__card-title {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.pdf-guides-admin__card-status {
+  margin: 4px 0 0;
+  font-size: 0.75rem;
+  line-height: 1.4;
+  color: var(--text-secondary);
+  word-break: break-all;
+}
+
+.pdf-guides-admin__badge {
+  flex-shrink: 0;
+  align-self: flex-start;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  background: var(--locked-bg);
+  color: var(--locked);
+}
+
+.pdf-guides-admin__badge--active {
+  background: var(--success-bg);
+  color: var(--success);
+}
+
+.pdf-guides-admin__file-input {
+  display: none;
+}
+
+.pdf-guides-admin__progress {
+  margin-bottom: 12px;
+}
+
+.pdf-guides-admin__progress-bar {
+  height: 8px;
+  margin-bottom: 6px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--accent), var(--accent-hover));
+  transition: width 0.2s ease;
+}
+
+.pdf-guides-admin__progress span {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+}
+
+.pdf-guides-admin__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.pdf-guides-admin__btn {
+  min-height: 44px;
+  padding: 10px 14px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+
+.pdf-guides-admin__btn--primary {
+  border-color: var(--accent);
+  background: var(--accent);
+  color: #fff;
+}
+
+.pdf-guides-admin__btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.pdf-guides-admin__toggle {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 44px;
+  font-size: 0.875rem;
+  color: var(--text-primary);
+  cursor: pointer;
+}
+
+.pdf-guides-admin__toggle input {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--accent);
+}
+
+.pdf-guides-admin__error {
+  margin: 10px 0 0;
+  font-size: 0.8125rem;
+  color: #f0a0a0;
+}
+
+.pdf-guides-admin__message {
+  margin: 10px 0 0;
+  font-size: 0.8125rem;
+  color: var(--accent-hover);
+}

@@ -1,4 +1,5 @@
 import { ADMIN_EXERCISES } from './exerciseCatalog'
+import { getExerciseById, getExerciseFallbackYoutube } from './exercises'
 
 export const EXERCISE_SETTINGS_KEY = 'oppa-v-line-exercise-settings'
 export const EXERCISE_SETTINGS_UPDATED_EVENT = 'oppa-v-line-exercise-settings-updated'
@@ -119,6 +120,42 @@ export function getExerciseMedia(exerciseId, fallbackYoutubeUrl = '') {
     youtubeEmbedUrl: getYouTubeEmbedUrl(youtubeUrl),
     anatomyImageUrl: settings.anatomyDataUrl || null,
   }
+}
+
+function hasPlayableMedia(media) {
+  return Boolean(media.mp4Url || media.youtubeEmbedUrl)
+}
+
+export function resolveExerciseMedia(exercise) {
+  if (!exercise) {
+    return {
+      mp4Url: null,
+      youtubeUrl: '',
+      youtubeEmbedUrl: null,
+      anatomyImageUrl: null,
+      sourceId: null,
+    }
+  }
+
+  const candidateIds = [
+    exercise.id,
+    ...(exercise.linkedMediaIds ?? []),
+  ]
+
+  for (const candidateId of candidateIds) {
+    const sourceExercise = getExerciseById(candidateId) ?? exercise
+    const media = getExerciseMedia(
+      candidateId,
+      getExerciseFallbackYoutube(sourceExercise),
+    )
+
+    if (hasPlayableMedia(media)) {
+      return { ...media, sourceId: candidateId }
+    }
+  }
+
+  const fallback = getExerciseMedia(exercise.id, getExerciseFallbackYoutube(exercise))
+  return { ...fallback, sourceId: exercise.id }
 }
 
 export function getExercisePreview(exerciseId, fallbackYoutubeUrl = '') {

@@ -19,10 +19,87 @@
   color: var(--text-secondary);
 }
 
+.exercise-library--section .exercise-library__header {
+  margin-bottom: 12px;
+}
+
+.exercise-library__section-title {
+  margin: 0;
+  font-size: 0.875rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--text-secondary);
+}
+
 .exercise-library__list {
   display: flex;
   flex-direction: column;
   gap: 16px;
+}
+
+.exercise-library--section .exercise-library__list {
+  gap: 10px;
+}
+
+.exercise-library__row-card {
+  border-radius: 14px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  background: var(--bg-card);
+  box-shadow: var(--shadow);
+}
+
+.exercise-library__row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  min-height: 56px;
+  padding: 12px 14px;
+  border: none;
+  background: transparent;
+  text-align: left;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+
+.exercise-library__row-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--accent-bg);
+  color: var(--accent-hover);
+  font-size: 0.75rem;
+  flex-shrink: 0;
+}
+
+.exercise-library__row-info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.exercise-library__card-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.exercise-library__collapse {
+  width: 32px;
+  height: 32px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: transparent;
+  color: var(--text-primary);
+  font-size: 1.25rem;
+  line-height: 1;
+  cursor: pointer;
 }
 
 .exercise-library__card {

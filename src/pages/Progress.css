@@ -19,3 +19,17 @@
   line-height: 1.5;
   color: var(--text-secondary);
 }
+
+.progress-page__photo-link-wrap {
+  margin-bottom: 20px;
+}
+
+.progress-page__photo-link {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--accent-hover);
+  text-decoration: none;
+}

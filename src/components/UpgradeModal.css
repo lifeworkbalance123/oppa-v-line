@@ -1,0 +1,81 @@
+.upgrade-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 120;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding: 16px;
+}
+
+.upgrade-modal__backdrop {
+  position: absolute;
+  inset: 0;
+  border: none;
+  background: rgba(0, 0, 0, 0.65);
+  cursor: pointer;
+}
+
+.upgrade-modal__panel {
+  position: relative;
+  width: 100%;
+  max-width: 500px;
+  padding: 20px;
+  border-radius: 20px 20px 16px 16px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow);
+}
+
+.upgrade-modal__title {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.upgrade-modal__text {
+  margin: 10px 0 16px;
+  font-size: 0.9375rem;
+  line-height: 1.45;
+  color: var(--text-secondary);
+}
+
+.upgrade-modal__error {
+  margin: 0 0 12px;
+  font-size: 0.8125rem;
+  color: #f0a0a0;
+}
+
+.upgrade-modal__actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.upgrade-modal__btn {
+  min-height: 48px;
+  padding: 12px 16px;
+  border-radius: 12px;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+
+.upgrade-modal__btn--primary {
+  border: 1px solid var(--accent);
+  background: var(--accent);
+  color: #fff;
+}
+
+.upgrade-modal__btn--ghost {
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text-secondary);
+}
+
+.upgrade-modal__btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}

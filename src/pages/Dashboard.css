@@ -256,6 +256,12 @@
   border-color: var(--accent-border);
 }
 
+.dashboard-btn--active {
+  border-color: var(--accent);
+  background: var(--accent-bg);
+  color: var(--text-primary);
+}
+
 .dashboard-btn--secondary {
   color: var(--text-primary);
   background: var(--bg-primary);

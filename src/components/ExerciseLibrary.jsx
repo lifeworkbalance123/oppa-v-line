@@ -1,86 +1,16 @@
 import { useEffect, useMemo, useState } from 'react'
+import { formatRecommendedTime, getRecommendedSeconds, LIBRARY_EXERCISES } from '../lib/exercises'
 import {
   EXERCISE_SETTINGS_KEY,
   EXERCISE_SETTINGS_UPDATED_EVENT,
-  getExerciseMedia,
+  resolveExerciseMedia,
 } from '../lib/exerciseSettings'
+import ExerciseTimer from './ExerciseTimer'
 import VideoWithFallback from './VideoWithFallback'
 import './ExerciseLibrary.css'
 
 const STORAGE_KEY = 'oppa-v-line-library-progress'
-
-const EXERCISES = [
-  {
-    id: 'isometric-chin-tuck',
-    name: 'Isometric Chin Tuck',
-    sets: 3,
-    metric: '10s hold',
-    type: 'hold',
-    youtubeUrl: 'https://www.youtube.com/watch?v=example-chin-tuck',
-    steps: [
-      'Sit or stand with your spine tall and shoulders relaxed.',
-      'Gently draw your chin straight back without tilting your head down.',
-      'Hold for 10 seconds while keeping your neck long.',
-      'Release slowly and repeat for all sets.',
-    ],
-  },
-  {
-    id: 'jawline-definer',
-    name: 'Jawline Definer',
-    sets: 3,
-    metric: '15 reps',
-    type: 'reps',
-    youtubeUrl: 'https://www.youtube.com/watch?v=example-jawline-definer',
-    steps: [
-      'Relax your jaw and align your head over your shoulders.',
-      'Slide your lower jaw slightly forward, then return to neutral.',
-      'Complete 15 controlled reps per set.',
-      'Avoid clenching your teeth throughout the movement.',
-    ],
-  },
-  {
-    id: 'cheek-lifter',
-    name: 'Cheek Lifter',
-    sets: 3,
-    metric: '12 reps',
-    type: 'reps',
-    youtubeUrl: 'https://www.youtube.com/watch?v=example-cheek-lifter',
-    steps: [
-      'Smile gently while keeping your lips closed.',
-      'Lift your cheeks upward toward your eyes without squinting.',
-      'Hold briefly at the top, then release with control.',
-      'Repeat for 12 reps each set.',
-    ],
-  },
-  {
-    id: 'full-face-lift',
-    name: 'Full Face Lift',
-    sets: 3,
-    metric: '10s hold',
-    type: 'hold',
-    youtubeUrl: 'https://www.youtube.com/watch?v=example-full-face-lift',
-    steps: [
-      'Place fingertips lightly at your temples and jawline.',
-      'Engage facial muscles upward as if resisting gravity.',
-      'Hold the lift for 10 seconds with steady breathing.',
-      'Release and reset before the next set.',
-    ],
-  },
-  {
-    id: 'tongue-posture',
-    name: 'Tongue Posture',
-    sets: 3,
-    metric: '10s hold',
-    type: 'hold',
-    youtubeUrl: 'https://www.youtube.com/watch?v=example-tongue-posture',
-    steps: [
-      'Rest the tip of your tongue on the ridge behind your upper teeth.',
-      'Press the back of your tongue flat against the roof of your mouth.',
-      'Hold for 10 seconds while breathing through your nose.',
-      'Maintain relaxed lips and jaw during each hold.',
-    ],
-  },
-]
+const EXERCISES = LIBRARY_EXERCISES
 
 function createEmptyProgress() {
   return EXERCISES.reduce((acc, exercise) => {
@@ -112,13 +42,49 @@ function loadProgress() {
   }
 }
 
-function ExerciseCard({ exercise, completedSets, mode, onModeChange, onToggleSet, settingsTick }) {
+function ExerciseCard({
+  exercise,
+  completedSets,
+  mode,
+  onModeChange,
+  onToggleSet,
+  settingsTick,
+  isExpanded,
+  onToggleExpand,
+  asSection,
+}) {
   const media = useMemo(
-    () => getExerciseMedia(exercise.id, exercise.youtubeUrl),
-    [exercise.id, exercise.youtubeUrl, settingsTick],
+    () => resolveExerciseMedia(exercise),
+    [exercise, settingsTick],
   )
+  const recommendedLabel = formatRecommendedTime(getRecommendedSeconds(exercise))
   const completedCount = completedSets.filter(Boolean).length
   const isComplete = completedCount === exercise.sets
+
+  if (asSection && !isExpanded) {
+    return (
+      <article className="exercise-library__row-card">
+        <button
+          type="button"
+          className="exercise-library__row"
+          onClick={onToggleExpand}
+        >
+          <span className="exercise-library__row-icon" aria-hidden="true">
+            ▶
+          </span>
+          <span className="exercise-library__row-info">
+            <span className="exercise-library__name">{exercise.name}</span>
+            <span className="exercise-library__meta">
+              {exercise.sets} sets · {exercise.metric} · Timer: {recommendedLabel}
+            </span>
+          </span>
+          <span className="exercise-library__progress-badge">
+            {completedCount}/{exercise.sets}
+          </span>
+        </button>
+      </article>
+    )
+  }
 
   return (
     <article
@@ -128,12 +94,24 @@ function ExerciseCard({ exercise, completedSets, mode, onModeChange, onToggleSet
         <div>
           <h3 className="exercise-library__name">{exercise.name}</h3>
           <p className="exercise-library__meta">
-            {exercise.sets} sets · {exercise.metric}
+            {exercise.sets} sets · {exercise.metric} · Timer: {recommendedLabel}
           </p>
         </div>
-        <span className="exercise-library__progress-badge">
-          {completedCount}/{exercise.sets}
-        </span>
+        <div className="exercise-library__card-actions">
+          {asSection && (
+            <button
+              type="button"
+              className="exercise-library__collapse"
+              onClick={onToggleExpand}
+              aria-label={`Collapse ${exercise.name}`}
+            >
+              ×
+            </button>
+          )}
+          <span className="exercise-library__progress-badge">
+            {completedCount}/{exercise.sets}
+          </span>
+        </div>
       </header>
 
       <div
@@ -162,14 +140,19 @@ function ExerciseCard({ exercise, completedSets, mode, onModeChange, onToggleSet
       </div>
 
       {mode === 'demo' ? (
-        <VideoWithFallback
-          exerciseName={exercise.name}
-          youtubeUrl={media.youtubeUrl}
-          mp4Url={media.mp4Url}
-          anatomyImageUrl={media.anatomyImageUrl}
-          steps={exercise.steps}
-        />
+        <>
+          <ExerciseTimer recommendedSeconds={getRecommendedSeconds(exercise)} />
+          <VideoWithFallback
+            exerciseName={exercise.name}
+            youtubeUrl={media.youtubeUrl}
+            mp4Url={media.mp4Url}
+            anatomyImageUrl={media.anatomyImageUrl}
+            steps={exercise.steps}
+          />
+        </>
       ) : (
+        <>
+          <ExerciseTimer recommendedSeconds={getRecommendedSeconds(exercise)} />
         <div className="exercise-library__sets" role="group" aria-label={`${exercise.name} sets`}>
           {Array.from({ length: exercise.sets }, (_, index) => {
             const setNumber = index + 1
@@ -195,14 +178,16 @@ function ExerciseCard({ exercise, completedSets, mode, onModeChange, onToggleSet
             )
           })}
         </div>
+        </>
       )}
     </article>
   )
 }
 
-function ExerciseLibrary() {
+function ExerciseLibrary({ asSection = false }) {
   const [progress, setProgress] = useState(loadProgress)
   const [settingsTick, setSettingsTick] = useState(0)
+  const [expandedId, setExpandedId] = useState(null)
   const [modes, setModes] = useState(
     () => EXERCISES.reduce((acc, exercise) => {
       acc[exercise.id] = 'demo'
@@ -255,13 +240,29 @@ function ExerciseLibrary() {
     })
   }
 
+  const handleToggleExpand = (exerciseId) => {
+    setExpandedId((prev) => (prev === exerciseId ? null : exerciseId))
+    handleModeChange(exerciseId, 'demo')
+  }
+
   return (
-    <section className="exercise-library">
+    <section className={`exercise-library${asSection ? ' exercise-library--section' : ''}`}>
       <header className="exercise-library__header">
-        <h1 className="exercise-library__title">Exercise Library</h1>
-        <p className="exercise-library__summary">
-          {overallProgress.completedSets}/{overallProgress.totalSets} sets completed
-        </p>
+        {asSection ? (
+          <>
+            <h2 className="exercise-library__section-title">EXERCISES</h2>
+            <p className="exercise-library__summary">
+              Tap ▶ to watch demo · {overallProgress.completedSets}/{overallProgress.totalSets} sets
+            </p>
+          </>
+        ) : (
+          <>
+            <h1 className="exercise-library__title">Exercise Library</h1>
+            <p className="exercise-library__summary">
+              {overallProgress.completedSets}/{overallProgress.totalSets} sets completed
+            </p>
+          </>
+        )}
       </header>
 
       <div className="exercise-library__list">
@@ -274,6 +275,9 @@ function ExerciseLibrary() {
             onModeChange={(mode) => handleModeChange(exercise.id, mode)}
             onToggleSet={(setIndex) => handleToggleSet(exercise.id, setIndex)}
             settingsTick={settingsTick}
+            asSection={asSection}
+            isExpanded={expandedId === exercise.id}
+            onToggleExpand={() => handleToggleExpand(exercise.id)}
           />
         ))}
       </div>

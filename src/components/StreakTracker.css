@@ -1,0 +1,80 @@
+.streak-tracker {
+  margin-bottom: 24px;
+}
+
+.streak-tracker__header {
+  margin-bottom: 12px;
+}
+
+.streak-tracker__title {
+  margin: 0;
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.streak-tracker__subtitle {
+  margin: 6px 0 0;
+  font-size: 0.8125rem;
+  line-height: 1.4;
+  color: var(--text-secondary);
+}
+
+.streak-tracker__card {
+  padding: 16px;
+  border-radius: 16px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow);
+}
+
+.streak-tracker__progress-meta {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.streak-tracker__progress-bar {
+  height: 10px;
+  margin-bottom: 16px;
+  border-radius: 999px;
+  background: var(--bg-primary);
+  border: 1px solid var(--border);
+  overflow: hidden;
+}
+
+.streak-tracker__progress-fill {
+  display: block;
+  height: 100%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--accent), var(--accent-hover));
+  transition: width 0.3s ease;
+}
+
+.streak-tracker__grid {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.streak-tracker__dot {
+  width: 100%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: var(--border);
+  border: 2px solid transparent;
+  transition: background 0.2s, border-color 0.2s, transform 0.2s;
+}
+
+.streak-tracker__dot--filled {
+  background: var(--accent-hover);
+}
+
+.streak-tracker__dot--current {
+  border-color: var(--accent-hover);
+  box-shadow: 0 0 0 2px var(--accent-bg);
+  transform: scale(1.08);
+}

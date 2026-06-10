@@ -9,6 +9,15 @@ import {
   redirectToCheckout,
 } from '../lib/stripe'
 import DailyCommitmentSelector from '../components/DailyCommitmentSelector'
+import ExerciseDemoPanel from '../components/ExerciseDemoPanel'
+import {
+  FREE_HOME_EXERCISES,
+  formatRecommendedTime,
+  getRecommendedSeconds,
+  HOME_EXERCISES,
+  PREMIUM_HOME_EXERCISES,
+} from '../lib/exercises'
+import { tryRecordCoreCompletionFromExercises } from '../lib/streakTracking'
 import './Dashboard.css'
 
 const STORAGE_KEYS = {
@@ -26,43 +35,9 @@ const PUFFINESS_LABELS = {
   5: 'Clear',
 }
 
-const FREE_EXERCISES = [
-  {
-    id: 'posture-reset',
-    name: 'Posture Reset',
-    duration: '5 min',
-    videoUrl: 'https://www.youtube.com/watch?v=example-posture-reset',
-  },
-  {
-    id: 'vertical-lift',
-    name: 'Vertical Lift',
-    duration: '8 min',
-    videoUrl: 'https://www.youtube.com/watch?v=example-vertical-lift',
-  },
-]
-
-const LOCKED_EXERCISES = [
-  {
-    id: 'midline-v-press',
-    name: 'Midline V-Press',
-    duration: '10 min',
-    videoUrl: 'https://www.youtube.com/watch?v=example-midline-v-press',
-  },
-  {
-    id: 'lymphatic-drain',
-    name: 'Lymphatic Drain',
-    duration: '12 min',
-    videoUrl: 'https://www.youtube.com/watch?v=example-lymphatic-drain',
-  },
-  {
-    id: 'passive-tongue-posture',
-    name: 'Passive Tongue Posture',
-    duration: '7 min',
-    videoUrl: 'https://www.youtube.com/watch?v=example-tongue-posture',
-  },
-]
-
-const ALL_EXERCISES = [...FREE_EXERCISES, ...LOCKED_EXERCISES]
+const FREE_EXERCISES = FREE_HOME_EXERCISES
+const LOCKED_EXERCISES = PREMIUM_HOME_EXERCISES
+const ALL_EXERCISES = HOME_EXERCISES
 const SODIUM_LEVELS = ['Low', 'Medium', 'High']
 const GLASS_ML = 250
 const WATER_GOAL_GLASSES = 8
@@ -163,9 +138,13 @@ function ExerciseCard({
   exercise,
   isLocked,
   isCompleted,
+  isVideoOpen,
   onToggleComplete,
   onWatchVideo,
+  onCloseVideo,
 }) {
+  const recommendedLabel = formatRecommendedTime(getRecommendedSeconds(exercise))
+
   return (
     <article
       className={`dashboard-exercise${isLocked ? ' dashboard-exercise--locked' : ''}${isCompleted ? ' dashboard-exercise--completed' : ''}`}
@@ -176,16 +155,18 @@ function ExerciseCard({
           {isLocked && <span className="dashboard-exercise__badge">Locked</span>}
           {isCompleted && <span className="dashboard-exercise__badge dashboard-exercise__badge--done">Done</span>}
         </div>
-        <p className="dashboard-exercise__duration">{exercise.duration}</p>
+        <p className="dashboard-exercise__duration">
+          {exercise.duration} · Timer: {recommendedLabel}
+        </p>
       </div>
       <div className="dashboard-exercise__actions">
         <button
           type="button"
-          className="dashboard-btn dashboard-btn--secondary"
+          className={`dashboard-btn dashboard-btn--secondary${isVideoOpen ? ' dashboard-btn--active' : ''}`}
           onClick={() => onWatchVideo(exercise)}
           disabled={isLocked}
         >
-          Video
+          {isVideoOpen ? 'Hide Video' : 'Video'}
         </button>
         <button
           type="button"
@@ -196,6 +177,10 @@ function ExerciseCard({
           {isCompleted ? 'Undo' : 'Complete'}
         </button>
       </div>
+
+      {isVideoOpen && !isLocked && (
+        <ExerciseDemoPanel exercise={exercise} onClose={onCloseVideo} />
+      )}
     </article>
   )
 }
@@ -209,6 +194,7 @@ function Dashboard() {
   const [upgradeLoading, setUpgradeLoading] = useState(false)
   const [upgradeError, setUpgradeError] = useState(null)
   const [dismissedSodiumAlert, setDismissedSodiumAlert] = useState(false)
+  const [activeVideoId, setActiveVideoId] = useState(null)
 
   const greeting = getTimeGreeting()
   const displayName = getDisplayName(user)
@@ -241,6 +227,7 @@ function Dashboard() {
       STORAGE_KEYS.completed,
       JSON.stringify(completedExercises),
     )
+    tryRecordCoreCompletionFromExercises(completedExercises)
   }, [completedExercises])
 
   useEffect(() => {
@@ -344,7 +331,7 @@ function Dashboard() {
   }
 
   const watchVideo = (exercise) => {
-    window.open(exercise.videoUrl, '_blank', 'noopener,noreferrer')
+    setActiveVideoId((prev) => (prev === exercise.id ? null : exercise.id))
   }
 
   const updateWater = (delta) => {
@@ -454,8 +441,10 @@ function Dashboard() {
               exercise={exercise}
               isLocked={false}
               isCompleted={completedSet.has(exercise.id)}
+              isVideoOpen={activeVideoId === exercise.id}
               onToggleComplete={toggleComplete}
               onWatchVideo={watchVideo}
+              onCloseVideo={() => setActiveVideoId(null)}
             />
           ))}
         </div>
@@ -470,8 +459,10 @@ function Dashboard() {
               exercise={exercise}
               isLocked={!isPremium}
               isCompleted={completedSet.has(exercise.id)}
+              isVideoOpen={activeVideoId === exercise.id}
               onToggleComplete={toggleComplete}
               onWatchVideo={watchVideo}
+              onCloseVideo={() => setActiveVideoId(null)}
             />
           ))}
         </div>

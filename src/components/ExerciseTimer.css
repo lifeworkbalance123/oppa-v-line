@@ -1,0 +1,75 @@
+.exercise-timer {
+  padding: 14px;
+  border-radius: 14px;
+  background: var(--bg-primary);
+  border: 1px solid var(--border);
+}
+
+.exercise-timer__header {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.exercise-timer__label,
+.exercise-timer__recommended {
+  margin: 0;
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+}
+
+.exercise-timer__recommended {
+  color: var(--accent-hover);
+  font-weight: 600;
+}
+
+.exercise-timer__display {
+  margin: 0 0 12px;
+  font-size: 2rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-align: center;
+  color: var(--text-primary);
+}
+
+.exercise-timer__display--done {
+  color: var(--accent-hover);
+}
+
+.exercise-timer__actions {
+  display: flex;
+  gap: 8px;
+}
+
+.exercise-timer__btn {
+  flex: 1;
+  min-height: 44px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text-primary);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+
+.exercise-timer__btn--primary {
+  border-color: var(--accent);
+  background: var(--accent);
+  color: #fff;
+}
+
+.exercise-timer__btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.exercise-timer__complete {
+  margin: 10px 0 0;
+  font-size: 0.8125rem;
+  text-align: center;
+  color: var(--accent-hover);
+}

@@ -6,7 +6,15 @@ import {
   getCommitmentById,
   loadSelectedCommitment,
 } from '../lib/dailyCommitment'
+import ExerciseDemoPanel from '../components/ExerciseDemoPanel'
+import { formatRecommendedTime, getRecommendedSeconds } from '../lib/exercises'
 import { getExercisesForCommitment } from '../lib/routineExercises'
+import {
+  loadStreakState,
+  MAINTENANCE_EXERCISE_IDS,
+  recordMaintenanceSession,
+  tryRecordCoreCompletionFromExercises,
+} from '../lib/streakTracking'
 import './Routine.css'
 
 const COMPLETED_STORAGE_KEY = 'oppa-v-line-completed-exercises'
@@ -42,9 +50,13 @@ function RoutineExerciseCard({
   exercise,
   isLocked,
   isCompleted,
+  isVideoOpen,
   onToggleComplete,
   onWatchVideo,
+  onCloseVideo,
 }) {
+  const recommendedLabel = formatRecommendedTime(getRecommendedSeconds(exercise))
+
   return (
     <article
       className={`routine-exercise${isLocked ? ' routine-exercise--locked' : ''}${isCompleted ? ' routine-exercise--completed' : ''}`}
@@ -57,7 +69,9 @@ function RoutineExerciseCard({
             <span className="routine-exercise__badge routine-exercise__badge--done">Done</span>
           )}
         </div>
-        <p className="routine-exercise__duration">{exercise.duration}</p>
+        <p className="routine-exercise__duration">
+          {exercise.duration} · Timer: {recommendedLabel}
+        </p>
       </div>
       <div className="routine-exercise__actions">
         <button
@@ -66,7 +80,7 @@ function RoutineExerciseCard({
           onClick={() => onWatchVideo(exercise)}
           disabled={isLocked}
         >
-          Video
+          {isVideoOpen ? 'Hide Video' : 'Video'}
         </button>
         <button
           type="button"
@@ -77,6 +91,10 @@ function RoutineExerciseCard({
           {isCompleted ? 'Undo' : 'Complete'}
         </button>
       </div>
+
+      {isVideoOpen && !isLocked && (
+        <ExerciseDemoPanel exercise={exercise} onClose={onCloseVideo} />
+      )}
     </article>
   )
 }
@@ -95,6 +113,7 @@ function Routine() {
   const [completedExercises, setCompletedExercises] = useState(loadCompletedExercises)
   const [jojobaComplete, setJojobaComplete] = useState(loadJojobaComplete)
   const [isPremium, setIsPremium] = useState(false)
+  const [activeVideoId, setActiveVideoId] = useState(null)
 
   const completedSet = useMemo(
     () => new Set(completedExercises),
@@ -107,6 +126,16 @@ function Routine() {
 
   useEffect(() => {
     localStorage.setItem(COMPLETED_STORAGE_KEY, JSON.stringify(completedExercises))
+    const { programMode } = loadStreakState()
+    const maintenanceComplete = MAINTENANCE_EXERCISE_IDS.every(
+      (id) => completedExercises.includes(id),
+    )
+
+    if (programMode === 'maintenance' && maintenanceComplete) {
+      recordMaintenanceSession()
+    } else {
+      tryRecordCoreCompletionFromExercises(completedExercises)
+    }
   }, [completedExercises])
 
   useEffect(() => {
@@ -148,7 +177,7 @@ function Routine() {
   }
 
   const watchVideo = (exercise) => {
-    window.open(exercise.videoUrl, '_blank', 'noopener,noreferrer')
+    setActiveVideoId((prev) => (prev === exercise.id ? null : exercise.id))
   }
 
   return (
@@ -172,8 +201,10 @@ function Routine() {
             exercise={exercise}
             isLocked={exercise.isPremium && !isPremium}
             isCompleted={completedSet.has(exercise.id)}
+            isVideoOpen={activeVideoId === exercise.id}
             onToggleComplete={toggleComplete}
             onWatchVideo={watchVideo}
+            onCloseVideo={() => setActiveVideoId(null)}
           />
         ))}
       </div>

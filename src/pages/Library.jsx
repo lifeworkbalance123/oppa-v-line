@@ -1,7 +1,7 @@
-import ExerciseLibrary from '../components/ExerciseLibrary'
+import LibraryTab from '../components/LibraryTab'
 
 function Library() {
-  return <ExerciseLibrary />
+  return <LibraryTab />
 }
 
 export default Library
